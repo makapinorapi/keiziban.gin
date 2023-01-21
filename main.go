@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -22,6 +23,7 @@ type Userresponse struct {
 }
 
 func main() {
+
 	dsn := "root:nora@tcp(127.0.0.1:3306)/keiziban?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -29,6 +31,17 @@ func main() {
 	}
 
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:8080/hello"},
+		AllowMethods: []string{"GET", "POST"},
+		AllowHeaders: []string{"Content-Type", "Access-Control-Allow-Credentials",
+			"Access-Control-Allow-Headers", "Content-Length",
+			"Accept-Encoding", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	fmt.Println("aaa") //↓ハローが呼び出されたときの関数
 	r.GET("/hello", func(c *gin.Context) {
@@ -69,7 +82,7 @@ func main() {
 	//db.Migrator().CreateTable(&User{})
 	//db.Set("gorm:table_options", "ENGINE=InnoDB").Migrator().CreateTable(&User{})
 
-	user1 := User{Title: "まl", Content: "あ"}
+	user1 := User{Title: "はるはるはるひ", Content: "ぎゃんぎゃん"}
 	user2 := []User{} //全取得はデータを格納する[]変数の定義
 	db.Create(&user1)
 
@@ -97,22 +110,24 @@ func main() {
 	})*/
 
 	r.POST("/post", func(c *gin.Context) {
-		comment := Comment{}
-		//db.AutoMigrate(&Comment{})
+		//comment := Comment{}
+		//db.AutoMigrate(&Comment{}) //テーブル作成
 		//db.Migrator().CreateTable(&Comment{})
-		come := Comment{title: "まl", content: "あ"}
-		fmt.Println("wwwwwwwww", come)
-		//db.Create(&comment) // pass pointer of data to Create
-		fmt.Println("ffffffffffffff", comment)
-		db.Find(&comment)
+		//come := Comment{Title: "まl", Content: "あ"}
+		//fmt.Println("wwwwwwwww", come)
+		//db.Create(&come) // sqlに反映する
 
-		request := Request{}
+		//fmt.Println("ffffffffffffff", comment)
+		//db.Find(&comment)//データを見つける
 
+		request := Comment{} //まlとか書いていたやつを消して、代入する
 		c.ShouldBindJSON(&request)
+
 		if err != nil {
 			// TODO
 		}
 		fmt.Println(request)
+		db.Create(&request)
 
 	})
 
@@ -139,19 +154,18 @@ func main() {
 	//}*/
 
 	//})
-
 	r.Run() // listen and serve on 0.0.0.0:8082 (for windows "localhost:8080")
 }
 
 type Comment struct {
 	ID        uint      `json:"id"`
-	title     string    `json:"title"`
-	content   string    `json:"content"`
+	Title     string    `json:"title"`
+	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type Request struct {
-	title   string `json:"title"`
-	content string `json:"content"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
 }
