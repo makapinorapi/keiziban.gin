@@ -40,7 +40,7 @@ func main() {
 		db.Find(&comments) //sqlからuserテーブルの情報を見つけ出し、gormのuserに値を渡している
 		res := make([]UserResponse, len(comments))
 		for i := 0; i < len(res); i++ {
-			res[i].User = comments[i].Title
+			res[i].User = comments[i].User
 			res[i].Content = comments[i].Content
 		}
 		c.JSON(200, res)
@@ -62,7 +62,7 @@ func main() {
 
 type Comment struct {
 	ID        uint      `json:"id"`
-	Title     string    `json:"title"`
+	User      string    `json:"user"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
