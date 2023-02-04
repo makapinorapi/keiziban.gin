@@ -9,7 +9,7 @@ import (
 )
 
 type UserResponse struct {
-	Title   string
+	User    string
 	Content string
 }
 
@@ -40,7 +40,7 @@ func main() {
 		db.Find(&comments) //sqlからuserテーブルの情報を見つけ出し、gormのuserに値を渡している
 		res := make([]UserResponse, len(comments))
 		for i := 0; i < len(res); i++ {
-			res[i].Title = comments[i].Title
+			res[i].User = comments[i].Title
 			res[i].Content = comments[i].Content
 		}
 		c.JSON(200, res)
