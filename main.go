@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -62,18 +61,10 @@ func main() {
 
 	r.POST("/goodCount", func(c *gin.Context) {
 		comments := Comment{}
-		//fmt.Println(reflect.TypeOf("comments")) // string
-		//db.Where(&Comment{ID: 188}).First(&comments)
-		//db.Select("id").Find(&comments)
 		c.ShouldBindJSON(&comments)
-		//fmt.Printf("%T\n", c.ShouldBindJSON, "rrrrrrrr")
 		db.Take(&comments) //値を取る
-		fmt.Println(comments, "aaaaaaaaa")
 		comments.GoodCount++
-		//db.Create(&comments)
-		fmt.Println(comments, "wwwwwwwwwwww")
 		db.Save(&comments) //保存
-		//fmt.Println(comments, "jjjjjjjjjjjj")
 		c.JSON(200, gin.H{ //↓"message":"hello"みたいな
 			"result": "ok",
 		})
